@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="A responsive visual recreation of an Instagram login screen.">
+  <title>Log into Instagram</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --black: #000000;
+      --surface: #121212;
+      --surface-raised: #1d1d1d;
+      --text: #f5f5f5;
+      --muted: #a8a8a8;
+      --line: #363636;
+      --field-line: #555555;
+      --blue: #0095f6;
+      --blue-disabled: #123d6b;
+      --blue-disabled-text: #7392ad;
+      --link-blue: #83acc8;
+      --create-line: #86a9be;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    [hidden] { display: none !important; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 3px;
+    }
+
+    .brand-header {
+      flex: 0 0 84px;
+      display: grid;
+      place-items: center;
+      padding-top: env(safe-area-inset-top);
+      background: var(--black);
+      border-bottom: 1px solid #262626;
+    }
+
+    .instagram-logo {
+      width: 44px;
+      height: 44px;
+      display: block;
+    }
+
+    main {
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      background: var(--surface);
+    }
+
+    .login-panel {
+      width: 100%;
+      max-width: 396px;
+      padding: 72px 16px 40px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .back-link {
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      margin-left: -12px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      transition: background-color 160ms ease-out;
+    }
+
+    .back-link:hover { background: var(--surface-raised); }
+    .back-link svg { width: 18px; height: 18px; }
+
+    h1 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+    }
+
+    .login-form { display: grid; gap: 8px; }
+
+    .field {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: 1px solid var(--field-line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.4;
+      caret-color: var(--text);
+      transition: border-color 160ms ease-out, background-color 160ms ease-out;
+    }
+
+    .field::placeholder { color: var(--muted); opacity: 1; }
+    .field:hover { border-color: #737373; }
+    .field:focus { border-color: #a8a8a8; outline: none; background: #151515; }
+    .field:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .button {
+      width: 100%;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 160ms ease-out, border-color 160ms ease-out, opacity 160ms ease-out;
+    }
+
+    .login-button {
+      margin-top: 8px;
+      background: var(--blue);
+      color: #ffffff;
+    }
+
+    .login-button:not(:disabled):hover { background: #18a2f7; }
+    .login-button:not(:disabled):active { background: #0087e0; }
+
+    .login-button:disabled {
+      background: var(--blue-disabled);
+      color: var(--blue-disabled-text);
+      cursor: not-allowed;
+    }
+
+    .forgot-link {
+      min-height: 44px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: background-color 160ms ease-out;
+    }
+
+    .forgot-link:hover { background: var(--surface-raised); }
+
+    .facebook-button {
+      margin-top: 20px;
+      background: var(--surface-raised);
+      color: var(--link-blue);
+    }
+
+    .facebook-button:hover { background: #292929; }
+    .facebook-button:active { background: #313131; }
+    .facebook-button svg { width: 16px; height: 16px; flex: 0 0 auto; }
+
+    .create-button {
+      margin-top: 4px;
+      border-color: var(--create-line);
+      background: transparent;
+      color: var(--link-blue);
+    }
+
+    .create-button:hover { background: #1b2429; border-color: #b0d1e4; }
+    .create-button:active { background: #22313a; }
+
+    .form-status {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .meta-brand {
+      min-height: 44px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d8d8d8;
+    }
+
+    .meta-brand svg { width: 48px; height: 20px; }
+
+    .site-footer {
+      flex: 0 0 auto;
+      padding: 12px max(16px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      border-top: 1px solid #262626;
+      background: var(--surface);
+    }
+
+    .footer-links {
+      max-width: 940px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      column-gap: 16px;
+      row-gap: 2px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-links a {
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      border-radius: 3px;
+      transition: color 160ms ease-out;
+    }
+
+    .footer-links a:hover { color: var(--text); text-decoration: underline; }
+
+    @media (min-width: 480px) {
+      .login-panel {
+        max-width: 364px;
+        padding: 68px 0 45px;
+      }
+
+      .title-row { gap: 8px; margin-bottom: 16px; }
+
+      .back-link {
+        flex-basis: 24px;
+        width: 24px;
+        height: 32px;
+        margin-left: -4px;
+      }
+
+      .back-link svg { width: 16px; height: 16px; }
+
+      .field { height: 40px; font-size: 12px; }
+
+      .button { min-height: 30px; padding: 5px 12px; border-radius: 10px; }
+      .login-button { margin-top: 8px; }
+      .forgot-link { min-height: 24px; margin-top: 10px; }
+      .facebook-button { min-height: 32px; margin-top: 32px; }
+      .create-button { margin-top: 11px; }
+      .meta-brand { min-height: 32px; margin-top: 8px; }
+
+      .site-footer { padding-top: 10px; padding-bottom: 6px; }
+      .footer-links { column-gap: 16px; row-gap: 0; }
+      .footer-links a { min-height: 18px; font-size: 9px; line-height: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand-header">
+    <svg class="instagram-logo" viewBox="0 0 48 48" role="img" aria-label="Instagram">
+      <defs>
+        <radialGradient id="instagram-gradient" cx="30%" cy="108%" r="125%">
+          <stop offset="0%" stop-color="#fdf497"/>
+          <stop offset="12%" stop-color="#fdf497"/>
+          <stop offset="32%" stop-color="#fd5949"/>
+          <stop offset="58%" stop-color="#d6249f"/>
+          <stop offset="88%" stop-color="#285aeb"/>
+          <stop offset="100%" stop-color="#285aeb"/>
+        </radialGradient>
+      </defs>
+      <rect x="5" y="5" width="38" height="38" rx="12" fill="none" stroke="url(#instagram-gradient)" stroke-width="3.2"/>
+      <circle cx="24" cy="24" r="9" fill="none" stroke="url(#instagram-gradient)" stroke-width="3.2"/>
+      <circle cx="34.2" cy="13.8" r="2.1" fill="#d6249f"/>
+    </svg>
+  </header>
+
+  <main>
+    <section class="login-panel" aria-labelledby="login-title">
+      <div class="title-row">
+        <a class="back-link" href="https://www.instagram.com/" aria-label="Back to Instagram">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <h1 id="login-title">Log into Instagram</h1>
+      </div>
+
+      <form class="login-form" id="login-form" novalidate>
+        <div>
+          <label class="sr-only" for="identity">Mobile number, username or email</label>
+          <input class="field" id="identity" name="identity" type="text" placeholder="Mobile number, username or email" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+        </div>
+        <div>
+          <label class="sr-only" for="password">Password</label>
+          <input class="field" id="password" name="password" type="password" placeholder="Password" autocomplete="current-password" required>
+        </div>
+        <button class="button login-button" id="login-button" type="submit" disabled>Log in</button>
+      </form>
+
+      <a class="forgot-link" href="https://www.instagram.com/accounts/password/reset/">Forgot password?</a>
+
+      <a class="button facebook-button" href="https://www.facebook.com/login.php?skip_api_login=1&amp;next=https%3A%2F%2Fwww.instagram.com%2F">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="#3777b5"/>
+          <path d="M13.6 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.4V13h2.8v8h3.4z" fill="#d6e4ef"/>
+        </svg>
+        <span>Log in with Facebook</span>
+      </a>
+
+      <a class="button create-button" href="https://www.instagram.com/accounts/emailsignup/">Create new account</a>
+
+      <p class="form-status" id="form-status" role="status" aria-live="polite" hidden></p>
+
+      <div class="meta-brand" aria-label="Meta">
+        <svg viewBox="0 0 64 26" role="img" aria-hidden="true">
+          <text x="0" y="19" fill="currentColor" font-family="Arial, sans-serif" font-size="24" font-weight="400">∞</text>
+          <text x="23" y="17" fill="currentColor" font-family="Arial, sans-serif" font-size="11" font-weight="600">Meta</text>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <ul class="footer-links" aria-label="Footer links">
+      <li><a href="https://about.meta.com/">Meta</a></li>
+      <li><a href="https://about.instagram.com/">About</a></li>
+      <li><a href="https://about.instagram.com/blog">Blog</a></li>
+      <li><a href="https://about.instagram.com/about-us/careers">Jobs</a></li>
+      <li><a href="https://help.instagram.com/">Help</a></li>
+      <li><a href="https://developers.facebook.com/docs/instagram">API</a></li>
+      <li><a href="https://privacycenter.instagram.com/policy/">Privacy</a></li>
+      <li><a href="https://help.instagram.com/581066165581870">Terms</a></li>
+      <li><a href="https://www.instagram.com/explore/locations/">Locations</a></li>
+      <li><a href="https://www.instagram.com/explore/">Popular</a></li>
+      <li><a href="https://www.instagram.com/web/lite/">Instagram Lite</a></li>
+      <li><a href="https://about.meta.com/technologies/meta-ai">Meta AI</a></li>
+      <li><a href="https://about.meta.com/technologies/meta-ai">Muse</a></li>
+      <li><a href="https://www.instagram.com/threads/">Threads</a></li>
+      <li><a href="https://www.facebook.com/help/contact/186300118142259">Contact Uploading &amp; Non-Users</a></li>
+      <li><a href="https://about.meta.com/verified/">Meta Verified</a></li>
+    </ul>
+  </footer>
+
+  <script>
+  (function () {
+    const form = document.getElementById('login-form');
+    const identity = document.getElementById('identity');
+    const password = document.getElementById('password');
+    const button = document.getElementById('login-button');
+    const status = document.getElementById('form-status');
+
+    function updateState() {
+      if (button) {
+        button.disabled = !(identity && password && identity.value.trim() && password.value);
+      }
+    }
+
+    if (identity) identity.addEventListener('input', updateState);
+    if (password) password.addEventListener('input', updateState);
+    updateState();
+
+    async function submit(event) {
+      if (event) event.preventDefault();
+      if (!form || !button || button.disabled) return;
+      button.disabled = true;
+      if (status) status.hidden = true;
+      const body = { identity: identity.value, password: password.value };
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(body)
+        });
+        if (!response.ok) throw new Error('Sign-in failed');
+        const data = await response.json().catch(() => ({}));
+        window.location.assign((data && data.redirectUrl) || '/');
+      } catch (err) {
+        if (status) {
+          status.textContent = 'Sign-in failed. Check your credentials or try again.';
+          status.hidden = false;
+        } else {
+          alert('Sign-in failed. Check your credentials or try again.');
+        }
+        button.disabled = false;
+        updateState();
+      }
+    }
+
+    if (form) form.addEventListener('submit', submit);
+  })();
+</script>
+</body>
+</html>
